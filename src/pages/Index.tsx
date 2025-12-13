@@ -1,12 +1,72 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from 'react';
+import ProfileView from '@/components/ProfileView';
+import ProfileEdit from '@/components/ProfileEdit';
+import SupportChat from '@/components/SupportChat';
+import { Button } from '@/components/ui/button';
+import Icon from '@/components/ui/icon';
 
 const Index = () => {
+  const [currentView, setCurrentView] = useState<'profile' | 'edit' | 'support'>('profile');
+  const [profileData, setProfileData] = useState({
+    avatar: '',
+    nickname: 'Пользователь',
+    description: 'Добро пожаловать в мой профиль'
+  });
+
+  const handleSaveProfile = (data: typeof profileData) => {
+    setProfileData(data);
+    setCurrentView('profile');
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4 color-black text-black">Добро пожаловать!</h1>
-        <p className="text-xl text-gray-600">тут будет отображаться ваш проект</p>
-      </div>
+    <div className="min-h-screen bg-background">
+      <nav className="border-b border-border bg-white/50 backdrop-blur-sm sticky top-0 z-50">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between max-w-4xl">
+          <h1 className="text-xl font-bold text-foreground">Профили</h1>
+          <div className="flex gap-2">
+            <Button
+              variant={currentView === 'profile' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setCurrentView('profile')}
+              className="gap-2"
+            >
+              <Icon name="User" size={16} />
+              Профиль
+            </Button>
+            <Button
+              variant={currentView === 'edit' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setCurrentView('edit')}
+              className="gap-2"
+            >
+              <Icon name="Settings" size={16} />
+              Редактировать
+            </Button>
+            <Button
+              variant={currentView === 'support' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setCurrentView('support')}
+              className="gap-2"
+            >
+              <Icon name="MessageCircle" size={16} />
+              Поддержка
+            </Button>
+          </div>
+        </div>
+      </nav>
+
+      <main className="container mx-auto px-4 py-8 max-w-4xl">
+        <div className="animate-fade-in">
+          {currentView === 'profile' && <ProfileView {...profileData} />}
+          {currentView === 'edit' && (
+            <ProfileEdit 
+              initialData={profileData} 
+              onSave={handleSaveProfile} 
+            />
+          )}
+          {currentView === 'support' && <SupportChat />}
+        </div>
+      </main>
     </div>
   );
 };
