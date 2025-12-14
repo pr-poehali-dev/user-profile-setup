@@ -4,9 +4,25 @@ from datetime import datetime
 from typing import Dict, Any, List
 import psycopg2
 from psycopg2.extras import RealDictCursor
+import requests
 
 def get_db_connection():
     return psycopg2.connect(os.environ['DATABASE_URL'])
+
+def send_telegram_notification(text: str):
+    token = os.environ.get('TELEGRAM_BOT_TOKEN', '')
+    if not token:
+        return
+    
+    url = f'https://api.telegram.org/bot{token}/sendMessage'
+    try:
+        requests.post(url, json={
+            'chat_id': '529416354',
+            'text': f'💬 <b>Новое сообщение в поддержке:</b>\n\n{text}',
+            'parse_mode': 'HTML'
+        }, timeout=5)
+    except Exception as e:
+        print(f'Telegram notification error: {e}')
 
 def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     '''
@@ -91,6 +107,9 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             
             new_message = cur.fetchone()
             conn.commit()
+            
+            if sender == 'user':
+                send_telegram_notification(text)
             
             return {
                 'statusCode': 201,

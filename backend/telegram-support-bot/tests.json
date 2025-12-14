@@ -1,0 +1,22 @@
+{
+  "tests": [
+    {
+      "name": "Webhook response",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "message": {
+          "chat": {
+            "id": 529416354
+          },
+          "text": "Test message"
+        }
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "status": "ok"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}
