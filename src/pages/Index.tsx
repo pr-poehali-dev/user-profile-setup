@@ -20,11 +20,11 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen relative">
       <Snowfall />
-      <nav className="border-b border-border bg-white/50 backdrop-blur-sm sticky top-0 z-50">
+      <nav className="border-b border-white/20 bg-white/10 backdrop-blur-md sticky top-0 z-40 shadow-lg">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between max-w-4xl">
-          <h1 className="text-xl font-bold text-foreground">Профили</h1>
+          <h1 className="text-xl font-bold text-white drop-shadow-lg">✨ Профили</h1>
           <div className="flex gap-2">
             <Button
               variant={currentView === 'profile' ? 'default' : 'ghost'}
