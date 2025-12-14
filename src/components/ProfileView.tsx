@@ -1,5 +1,6 @@
 import { Card } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
 import Icon from '@/components/ui/icon';
 
 interface ProfileViewProps {
@@ -25,6 +26,14 @@ const ProfileView = ({ avatar, nickname, description }: ProfileViewProps) => {
             {description}
           </p>
         </div>
+
+        <Button 
+          onClick={() => window.open('http://dubbingrp.tilda.ws/', '_blank')}
+          className="mt-4"
+        >
+          <Icon name="ShoppingBag" className="mr-2" size={20} />
+          Магазин
+        </Button>
       </div>
     </Card>
   );
