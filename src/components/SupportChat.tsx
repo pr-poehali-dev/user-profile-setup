@@ -32,7 +32,11 @@ const SupportChat = () => {
   useEffect(() => {
     loadMessages();
     const interval = setInterval(loadMessages, 5000);
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      setMessages([]);
+      setInputValue('');
+    };
   }, []);
 
   const loadMessages = async () => {
