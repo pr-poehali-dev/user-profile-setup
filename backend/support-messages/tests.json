@@ -1,0 +1,29 @@
+{
+  "tests": [
+    {
+      "name": "Get all messages",
+      "method": "GET",
+      "path": "/",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "messages": "array"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Send user message",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "text": "Test message from user"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "id": "string",
+        "text": "Test message from user",
+        "sender": "user"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}

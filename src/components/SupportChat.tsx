@@ -4,25 +4,24 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import Icon from '@/components/ui/icon';
+import { useToast } from '@/hooks/use-toast';
 
 interface Message {
   id: string;
   text: string;
-  sender: 'user' | 'support';
+  sender: 'user' | 'support' | 'admin';
   timestamp: Date;
+  isRead?: boolean;
 }
 
+const API_URL = 'https://functions.poehali.dev/0341c364-f736-4cf4-9e48-8454ff2707b2';
+
 const SupportChat = () => {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      text: 'Здравствуйте! Чем могу помочь?',
-      sender: 'support',
-      timestamp: new Date()
-    }
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -30,28 +29,65 @@ const SupportChat = () => {
     }
   }, [messages]);
 
-  const handleSend = () => {
-    if (!inputValue.trim()) return;
+  useEffect(() => {
+    loadMessages();
+    const interval = setInterval(loadMessages, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
-    const newMessage: Message = {
-      id: Date.now().toString(),
-      text: inputValue,
-      sender: 'user',
-      timestamp: new Date()
-    };
+  const loadMessages = async () => {
+    try {
+      const response = await fetch(API_URL);
+      const data = await response.json();
+      
+      setMessages(data.messages.map((msg: any) => ({
+        id: msg.id,
+        text: msg.text,
+        sender: msg.sender,
+        timestamp: new Date(msg.timestamp),
+        isRead: msg.isRead
+      })));
+    } catch (error) {
+      console.error('Error loading messages:', error);
+    }
+  };
 
-    setMessages(prev => [...prev, newMessage]);
+  const handleSend = async () => {
+    if (!inputValue.trim() || isLoading) return;
+
+    setIsLoading(true);
+    const messageText = inputValue;
     setInputValue('');
 
-    setTimeout(() => {
-      const autoReply: Message = {
-        id: (Date.now() + 1).toString(),
-        text: 'Спасибо за ваше сообщение! Администратор ответит в ближайшее время.',
-        sender: 'support',
-        timestamp: new Date()
-      };
-      setMessages(prev => [...prev, autoReply]);
-    }, 1000);
+    try {
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text: messageText })
+      });
+
+      if (response.ok) {
+        await loadMessages();
+      } else {
+        toast({
+          title: 'Ошибка',
+          description: 'Не удалось отправить сообщение',
+          variant: 'destructive'
+        });
+        setInputValue(messageText);
+      }
+    } catch (error) {
+      toast({
+        title: 'Ошибка',
+        description: 'Проблема с подключением',
+        variant: 'destructive'
+      });
+      setInputValue(messageText);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -84,6 +120,8 @@ const SupportChat = () => {
                 className={`max-w-[75%] rounded-2xl px-4 py-3 ${
                   message.sender === 'user'
                     ? 'bg-primary text-primary-foreground'
+                    : message.sender === 'admin'
+                    ? 'bg-accent text-accent-foreground border-2 border-primary/20'
                     : 'bg-muted text-foreground'
                 }`}
               >
@@ -113,7 +151,7 @@ const SupportChat = () => {
         <Button 
           onClick={handleSend} 
           size="icon"
-          disabled={!inputValue.trim()}
+          disabled={!inputValue.trim() || isLoading}
         >
           <Icon name="Send" size={18} />
         </Button>
