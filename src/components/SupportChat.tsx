@@ -101,16 +101,37 @@ const SupportChat = () => {
     }
   };
 
+  const handleClearHistory = () => {
+    setMessages([]);
+    toast({
+      title: 'История очищена',
+      description: 'Все сообщения удалены из вашего чата',
+    });
+  };
+
   return (
     <Card className="p-6 animate-scale-in flex flex-col h-[600px]">
-      <div className="flex items-center gap-3 pb-4 border-b mb-4">
-        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-          <Icon name="Headset" size={20} className="text-primary" />
+      <div className="flex items-center justify-between pb-4 border-b mb-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+            <Icon name="Headset" size={20} className="text-primary" />
+          </div>
+          <div>
+            <h2 className="font-semibold text-lg">Поддержка</h2>
+            <p className="text-sm text-muted-foreground">Обычно отвечаем в течение часа</p>
+          </div>
         </div>
-        <div>
-          <h2 className="font-semibold text-lg">Поддержка</h2>
-          <p className="text-sm text-muted-foreground">Обычно отвечаем в течение часа</p>
-        </div>
+        {messages.length > 0 && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleClearHistory}
+            className="gap-2 text-muted-foreground hover:text-destructive"
+          >
+            <Icon name="Trash2" size={16} />
+            Очистить
+          </Button>
+        )}
       </div>
 
       <ScrollArea className="flex-1 pr-4" ref={scrollRef}>
