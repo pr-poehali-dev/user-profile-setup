@@ -2,6 +2,7 @@ import { useState } from 'react';
 import ProfileView from '@/components/ProfileView';
 import ProfileEdit from '@/components/ProfileEdit';
 import SupportChat from '@/components/SupportChat';
+import Snowfall from '@/components/Snowfall';
 import { Button } from '@/components/ui/button';
 import Icon from '@/components/ui/icon';
 
@@ -20,6 +21,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Snowfall />
       <nav className="border-b border-border bg-white/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between max-w-4xl">
           <h1 className="text-xl font-bold text-foreground">Профили</h1>
